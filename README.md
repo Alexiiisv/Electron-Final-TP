@@ -1,6 +1,6 @@
 # Electron-Final-TP
 
-Application utilisant l'api d'[Osu](https://osu.ppy.sh/wiki/en/osu%21api)
+Application utilisant l'api d'[Osu](https://osu.ppy.sh/wiki/en/osu%21api) (Je ne sais pas ce que cette api propose, je ne l'ai jamais utilisé).
 
 - Récupération des informations relative à un profil
 
