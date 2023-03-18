@@ -1,13 +1,15 @@
 // Module to control the application lifecycle and the native browser window.
-const { app, BrowserWindow, protocol } = require("electron");
+const { app, BrowserWindow, protocol, ipcMain, dialog } = require("electron");
 const path = require("path");
 const url = require("url");
+const fs = require("fs");
 
 // Create the native browser window.
 function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    //full size of the screen
+    width: 1920,
+    height: 1080,
     // Set the path of an additional "preload" script that can be used to
     // communicate between node-land and browser-land.
     webPreferences: {
@@ -90,3 +92,17 @@ app.on("web-contents-created", (event, contents) => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+ipcMain.on("open-file-dialog", (event) => {
+  var getFile = dialog.showOpenDialogSync({
+    properties: ["openFile"],
+    filters: [{ name: "Text", extensions: ["txt", "osu"] }],
+  });
+  event.sender.send("selected-directory", getFile);
+});
+
+// ipcMain.on("get-Content-File", (event, _) => {
+//   fs.readFile("path/to/file", (_, data) => {
+//     event.sender.send("fromMain", data);
+//   });
+// });
