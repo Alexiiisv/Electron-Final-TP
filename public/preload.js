@@ -1,6 +1,3 @@
-const {
-  default: AsyncStorage,
-} = require("@react-native-async-storage/async-storage");
 const { contextBridge, ipcRenderer } = require("electron");
 const fs = require("fs");
 

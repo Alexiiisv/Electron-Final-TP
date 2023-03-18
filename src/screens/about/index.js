@@ -7,6 +7,7 @@ import { BeatmapDecoder } from "osu-parsers";
 const About = (props) => {
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState("");
+  const [beatmap, setBeatmap] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
   const decoder = new BeatmapDecoder();
@@ -25,6 +26,7 @@ const About = (props) => {
       parseStoryboard: true,
       parseColours: true,
     });
+    setBeatmap(beatmap2);
 
     console.log(beatmap2);
   }, [content]);
@@ -83,16 +85,30 @@ const About = (props) => {
           </button>
         </div>
         <div>
+          <TableCustom title={"General"} content={beatmap["general"]} id={0} />
+          <TableCustom title={"Editor"} content={beatmap["editor"]} id={1} />
           <TableCustom
-            title={"General"}
-            content={string_between_strings("[General]", "[Editor]", content)}
-            id={0}
+            title={"Metadata"}
+            content={beatmap["metadata"]}
+            id={2}
           />
           <TableCustom
-            title={"Editor"}
-            content={string_between_strings("[Editor]", "[Metadata]", content)}
-            id={1}
+            title={"Difficulty"}
+            content={beatmap["difficulty"]}
+            id={3}
           />
+          <TableCustom title={"Events"} content={beatmap["events"]} id={4} />
+          {/* <TableCustom
+            title={"TimingPoints"}
+            content={beatmap["timingPoints"]}
+            id={5}
+          /> */}
+          {/* <TableCustom title={"Colors"} content={beatmap["colors"]} id={6} /> */}
+          {/* <TableCustom
+            title={"HitObjects"}
+            content={beatmap["hitObjects"]}
+            id={7}
+          /> */}
         </div>
       </header>
     </div>

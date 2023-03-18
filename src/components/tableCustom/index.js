@@ -24,10 +24,20 @@ const TableCustom = ({ title, content, id }) => {
         </tr>
       </thead>
       <TableBody style={{ display: "none" }}>
-        {content.split(",").map((a) => {
+        {Object.entries(content).map(([key, value]) => {
+          if (key === "tags") return null;
           return (
-            <tr key={a}>
-              <Row>{a}</Row>
+            <tr key={key}>
+              <td>{key}</td>
+              <td>
+                {value === true
+                  ? "true"
+                  : value === false
+                  ? "false"
+                  : value === ""
+                  ? "empty"
+                  : value}
+              </td>
             </tr>
           );
         })}

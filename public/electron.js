@@ -100,9 +100,3 @@ ipcMain.on("open-file-dialog", (event) => {
   });
   event.sender.send("selected-directory", getFile);
 });
-
-// ipcMain.on("get-Content-File", (event, _) => {
-//   fs.readFile("path/to/file", (_, data) => {
-//     event.sender.send("fromMain", data);
-//   });
-// });
