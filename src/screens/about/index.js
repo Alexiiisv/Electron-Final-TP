@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../../App.css";
-import TableCustom from "../../components/tableCustom";
 import { BeatmapDecoder } from "osu-parsers";
+import { Canvas } from "./style";
+import { Vector2, HitObject } from "osu-classes";
 
-const About = (props) => {
+const About = () => {
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState("");
   const [beatmap, setBeatmap] = useState({});
-  const navigate = useNavigate();
+  const [background, setBackground] = useState("");
   const location = useLocation();
   const decoder = new BeatmapDecoder();
 
   useEffect(() => {
-    console.log(content);
+    const before_ = location.state.path.substring(
+      0,
+      location.state.path.lastIndexOf("\\")
+    );
     if (content === "") return;
     const beatmap2 = decoder.decodeFromString(content, {
       parseGeneral: true,
@@ -27,6 +31,7 @@ const About = (props) => {
       parseColours: true,
     });
     setBeatmap(beatmap2);
+    setBackground(before_ + "\\" + beatmap2["events"].backgroundPath);
 
     console.log(beatmap2);
   }, [content]);
@@ -40,6 +45,19 @@ const About = (props) => {
     }, 1000);
   }, []);
 
+  //Essai de chargement de l'image non fonctionnel
+  useEffect(() => {
+    console.log(background);
+    setTimeout(() => {
+      console.log("aaa");
+      var bg = new Image();
+      bg.src = background;
+      bg.onload = function () {
+        document.getElementById("canvas").getContext("2d").drawImage(bg, 0, 0);
+      };
+    }, 1500);
+  }, [background]);
+
   if (loading) {
     return (
       <>
@@ -48,67 +66,63 @@ const About = (props) => {
       </>
     );
   }
-  // valeur à récupérer: [General], [Editor], [Metadata], [Difficulty], [Events], [TimingPoints], [Colours], [HitObjects]
+  // valeur à récupérer: [General], [Editor], [Metadata], [Difficulty], [Events], [TimingPoints], [Colours], [HitObjects] //obsolete
 
-  // fonction qui retourne la chaine de caractère entre 2 autres chaine de caractère
-  /* exemple: string_between_strings("[General]", "[Editor]", content)
-    retourne: "AudioFilename: 01 - The Beginning.mp3
-    AudioLeadIn: 0
-    PreviewTime: 0
-    Countdown: 0
-    SampleSet: Soft
-    StackLeniency: 0.7
-    Mode: 0
-    LetterboxInBreaks: 0
-    SpecialStyle: 0
-    WidescreenStoryboard: 0"
-  */
-  const string_between_strings = (startStr, endStr, str) => {
-    var pos = str.indexOf(startStr) + startStr.length + 2; // position de la fin de startStr
-
-    // si endStr est vide, on retourne la fin de la chaine avec les sauts de ligne remplacés par des <br>
-    if (endStr === "") return str.substring(pos).replace(/\n/g, "<br>");
-
-    // on récupère la chaine entre startStr et endStr et on remplace les sauts de ligne par des <br>
-    str = str.substring(pos, str.indexOf(endStr, pos) - 4).replace(/\n/g, ",");
-    // console.log(str);
-    return str;
-  };
   return (
     <div>
       <header className="App-header">
-        <h1>Page About</h1>
-        <Link to="/">Home page</Link>
-        <div style={{ display: "none" }}>
-          <button onClick={() => navigate("/")}>
-            Vers Page Home (Methode avec navigate)
-          </button>
-        </div>
+        <h1>Beatmap</h1>
+        <h3>
+          {beatmap["metadata"].title} - {beatmap["metadata"].artist}
+        </h3>
+        <Link to="/">Return</Link>
         <div>
-          <TableCustom title={"General"} content={beatmap["general"]} id={0} />
-          <TableCustom title={"Editor"} content={beatmap["editor"]} id={1} />
-          <TableCustom
-            title={"Metadata"}
-            content={beatmap["metadata"]}
-            id={2}
+          <Canvas
+            // img={
+            //   "C:\\Users\\Alexis\\AppData\\Local\\osu!\\Songs\\1854021 himmel - Empyrean\\FIRIKA BG.jpg"
+            // }
+            id="canvas"
+            onMouseDown={(event) => {
+              var canvas = document.getElementById("canvas");
+              var ctx = canvas.getContext("2d");
+              const element = event.target;
+              let rect = element.getBoundingClientRect();
+              let x = event.clientX - rect.left;
+              let y = event.clientY - rect.top;
+              var point = new Vector2(Math.floor(x), y);
+              const hitObject = new HitObject(point);
+              hitObject["startPosition"] = point;
+              console.log(beatmap["hitObjects"].slice(-1)[0].startTime);
+              hitObject["startTime"] =
+                beatmap["hitObjects"].slice(-1)[0].startTime + 10;
+              beatmap["hitObjects"].push(hitObject);
+              window.dialog.writeEndFile(
+                location.state.path,
+                hitObject.startPosition +
+                  "," +
+                  hitObject.startTime +
+                  ",1,0,0:0:0:0:\n"
+              );
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              beatmap["hitObjects"].slice(-10).forEach((hitObject) => {
+                console.log(hitObject);
+                ctx.fillRect(
+                  hitObject.startPosition.x / 2.15,
+                  hitObject.startPosition.y / 2.35,
+                  5,
+                  5
+                );
+              });
+              console.log(
+                "Coordinate x: " + Math.floor(x),
+                "Coordinate y: " + y,
+                "\nId du hitpoint ",
+                beatmap["hitObjects"].length - 1,
+                beatmap["hitObjects"][beatmap["hitObjects"].length - 1],
+                beatmap
+              );
+            }}
           />
-          <TableCustom
-            title={"Difficulty"}
-            content={beatmap["difficulty"]}
-            id={3}
-          />
-          <TableCustom title={"Events"} content={beatmap["events"]} id={4} />
-          {/* <TableCustom
-            title={"TimingPoints"}
-            content={beatmap["timingPoints"]}
-            id={5}
-          /> */}
-          {/* <TableCustom title={"Colors"} content={beatmap["colors"]} id={6} /> */}
-          {/* <TableCustom
-            title={"HitObjects"}
-            content={beatmap["hitObjects"]}
-            id={7}
-          /> */}
         </div>
       </header>
     </div>

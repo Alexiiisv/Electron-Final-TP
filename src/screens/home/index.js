@@ -7,7 +7,6 @@ const Home = () => {
   const [path, setPath] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
-    console.log(path);
     document.getElementById("path").innerHTML = path;
     if (!path) return;
     navigate("/about", { state: { path: path[0] } });

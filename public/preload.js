@@ -13,8 +13,17 @@ process.once("loaded", () => {
           alert("An error ocurred reading the file :" + err.message);
           return;
         }
-        console.log(data);
         setstate(data);
+      });
+    },
+    writeEndFile: (path, content) => {
+      fs.appendFile(path, content, (err) => {
+        if (err) {
+          alert(
+            "An error ocurred while writing to end of the file " + err.message
+          );
+          return;
+        }
       });
     },
     getSavedPath: (setstate) => {
