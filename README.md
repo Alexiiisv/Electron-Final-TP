@@ -1,9 +1,7 @@
 # Electron-Final-TP
 
-Application utilisant l'api d'[Osu](https://osu.ppy.sh/wiki/en/osu%21api) (Je ne sais pas ce que cette api propose, je ne l'ai jamais utilisé).
+Application permettant de rajouter des points dans un map osu
 
-- Récupération des informations relative à un profil
+Lien de la présentation de l'application: [Lien](https://youtu.be/pIEbULy-6SA)
 
-- Récupération des informations d'une beatmap (leaderboard, stats, son (si possible)).
-
-- on verra la suite
+j'ai eu du mal à réaliser ce projet mais finalement le résultat me convient et il fait ce qui est demandé, l'enregistrement de la map se fait à chaque fois qu'on clique dans la zone.
